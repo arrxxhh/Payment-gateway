@@ -12,13 +12,7 @@ export default function Dashboard() {
   const [analyticsMethods, setAnalyticsMethods] = useState(null)
   const [analyticsSettlement, setAnalyticsSettlement] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
-  const now = new Date()
-  const [filter, setFilter] = useState({
-    method: searchParams.get('method') || 'ALL',
-    status: searchParams.get('status') || 'ALL',
-    year: Number(searchParams.get('year') || now.getFullYear()),
-    month: Number(searchParams.get('month') || (now.getMonth()+1)), // 1-12
-  })
+  const [filter, setFilter] = useState({ method: searchParams.get('method') || 'ALL', status: searchParams.get('status') || 'ALL', from: searchParams.get('from') || '', to: searchParams.get('to') || '' })
   const [selected, setSelected] = useState(new Set())
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState(null)
@@ -32,13 +26,8 @@ export default function Dashboard() {
     const query = new URLSearchParams()
     if (filter.status !== 'ALL') query.set('status', filter.status)
     if (filter.method !== 'ALL') query.set('method', filter.method)
-    // Convert month/year to date range
-    if (filter.year && filter.month) {
-      const start = new Date(filter.year, filter.month - 1, 1)
-      const end = new Date(filter.year, filter.month, 0)
-      query.set('dateFrom', start.toISOString())
-      query.set('dateTo', new Date(end.setHours(23,59,59,999)).toISOString())
-    }
+    if (filter.from) query.set('dateFrom', filter.from)
+    if (filter.to) query.set('dateTo', filter.to)
     const [t, a, am, as] = await Promise.all([
       api.get(`/transactions${query.toString() ? `?${query.toString()}` : ''}`),
       api.get('/analytics'),
@@ -58,8 +47,8 @@ export default function Dashboard() {
     const sp = new URLSearchParams()
     if (filter.method !== 'ALL') sp.set('method', filter.method)
     if (filter.status !== 'ALL') sp.set('status', filter.status)
-    if (filter.year) sp.set('year', String(filter.year))
-    if (filter.month) sp.set('month', String(filter.month))
+    if (filter.from) sp.set('from', filter.from)
+    if (filter.to) sp.set('to', filter.to)
     setSearchParams(sp)
     setPage(1)
   }, [filter, setSearchParams])
@@ -119,26 +108,8 @@ export default function Dashboard() {
           <option value="SETTLED">SETTLED</option>
           <option value="REFUNDED">REFUNDED</option>
         </select>
-        <select className="rounded-xl border bg-white/70 dark:bg-white/10 px-3 py-2" value={filter.month} onChange={e=>setFilter({ ...filter, month: Number(e.target.value) })}>
-          <option value={1}>Jan</option>
-          <option value={2}>Feb</option>
-          <option value={3}>Mar</option>
-          <option value={4}>Apr</option>
-          <option value={5}>May</option>
-          <option value={6}>Jun</option>
-          <option value={7}>Jul</option>
-          <option value={8}>Aug</option>
-          <option value={9}>Sep</option>
-          <option value={10}>Oct</option>
-          <option value={11}>Nov</option>
-          <option value={12}>Dec</option>
-        </select>
-        <select className="rounded-xl border bg-white/70 dark:bg-white/10 px-3 py-2" value={filter.year} onChange={e=>setFilter({ ...filter, year: Number(e.target.value) })}>
-          {Array.from({length: 7}).map((_,i)=>{
-            const y = now.getFullYear() - i
-            return <option key={y} value={y}>{y}</option>
-          })}
-        </select>
+        <input type="date" className="rounded-xl border bg-white/70 dark:bg-white/10 px-3 py-2" value={filter.from} onChange={e=>setFilter({ ...filter, from: e.target.value })} />
+        <input type="date" className="rounded-xl border bg-white/70 dark:bg-white/10 px-3 py-2" value={filter.to} onChange={e=>setFilter({ ...filter, to: e.target.value })} />
         <Button variant="outline" onClick={load}>Refresh</Button>
         <Button variant="outline" onClick={()=>setAutoRefresh(v=>!v)}>{autoRefresh ? 'Auto-refresh: On' : 'Auto-refresh: Off'}</Button>
       </div>
