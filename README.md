@@ -17,10 +17,10 @@ Environment (no third‑party API keys required)
 Create backend/.env using the example values:
 
 PORT=4000
-MONGODB_URI=mongodb://localhost:27017/mini_payments
-JWT_SECRET=supersecret_jwt_key_change_me
-AES_KEY_HEX=00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff
-AES_IV_HEX=00112233445566778899aabbccddeeff
+MONGODB_URI
+JWT_SECRET=
+AES_KEY_HEX=
+AES_IV_HEX=
 CLIENT_ORIGIN=http://localhost:5173
 
 Frontend env (optional):
