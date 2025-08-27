@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply text-gray-900 dark:text-gray-100;
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(99,102,241,0.25), rgba(99,102,241,0) 60%),
+              radial-gradient(1000px 500px at 110% 10%, rgba(168,85,247,0.25), rgba(168,85,247,0) 60%),
+              linear-gradient(180deg, #f8fafc, #f1f5f9);
+}
+
+.dark body {
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(99,102,241,0.35), rgba(99,102,241,0) 60%),
+              radial-gradient(1000px 500px at 110% 10%, rgba(168,85,247,0.35), rgba(168,85,247,0) 60%),
+              linear-gradient(180deg, #0b1020, #0f172a);
+}
+
